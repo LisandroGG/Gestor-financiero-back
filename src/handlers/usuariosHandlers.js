@@ -94,7 +94,7 @@ export const loginUsuario = async (req, res) => {
             secure: false,
             maxAge: 1000 * 60 * 60
         })
-        .status(200).json({ message: 'Usuario autenticado correctamente'});
+        .status(200).json({ message: 'Sesion iniciada exitosamente'});
 
     } catch (error) {
         console.error('Error en login:', error);
@@ -109,7 +109,7 @@ export const logoutUsuario = async (req, res) => {
             sameSite: 'strict',
             secure: false,
         });
-        res.status(200).json({ message: 'Usuario desconectado correctamente.' });
+        res.status(200).json({ message: 'Sesion cerrada exitosamente' });
     } catch (error) {
         console.error('Error en logout:', error);
         res.status(500).json({ message: 'Error al intentar desconectar al usuario.' });
