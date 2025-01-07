@@ -53,7 +53,6 @@ export const registerUsuario = async (req, res) => {
 
 export const loginUsuario = async (req, res) => {
     const { gmailUsuario, contraseñaUsuario } = req.body;
-    console.log("Datos recibidos en el backend:", req.body);
 
     try {
         // Buscar el usuario por su email
@@ -95,7 +94,7 @@ export const loginUsuario = async (req, res) => {
             secure: false,
             maxAge: 1000 * 60 * 60
         })
-        .status(200).json({ message: 'Usuario autenticado correctamente', token });
+        .status(200).json({ message: 'Usuario autenticado correctamente'});
 
     } catch (error) {
         console.error('Error en login:', error);

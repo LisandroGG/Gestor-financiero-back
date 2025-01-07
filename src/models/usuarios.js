@@ -28,7 +28,6 @@ export const Usuario = sequelize.define(
         hooks: {
             beforeCreate: async (usuario) => {
                 const saltRounds = 10;
-                console.log('Hashing contraseña:', usuario.contraseñaUsuario);
                 usuario.contraseñaUsuario = await bcrypt.hash(usuario.contraseñaUsuario, saltRounds);
             }
         }
