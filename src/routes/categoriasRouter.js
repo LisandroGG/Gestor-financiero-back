@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { crearCategoria } from "../handlers/categoriasHandlers.js";
+import { actualizarCategoria, crearCategoria, eliminarCategoria, obtenerCategorias } from "../handlers/categoriasHandlers.js";
 
 export const categoriaRouter = Router();
 
-categoriaRouter.get('/obtener', )
+categoriaRouter.get('/obtener/:idUsuario', obtenerCategorias);
 categoriaRouter.post('/crear', crearCategoria);
-categoriaRouter.put('/editar', );
-categoriaRouter.delete('/borrar', );
+categoriaRouter.put('/actualizar/:idUsuario/:idCategoria', actualizarCategoria);
+categoriaRouter.delete('/eliminar/:idUsuario/:idCategoria', eliminarCategoria);
