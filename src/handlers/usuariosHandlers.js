@@ -92,9 +92,16 @@ export const loginUsuario = async (req, res) => {
             httpOnly: true,
             sameSite: 'strict',
             secure: false,
-            maxAge: 1000 * 60 * 60
+            maxAge: 1000 * 60 * 60, // 1 hora
         })
-        .status(200).json({ message: 'Sesion iniciada exitosamente'});
+        .status(200).json({
+            message: 'Sesion iniciada exitosamente',
+            token: {
+                idUsuario: usuario.idUsuario,
+                nombreUsuario: usuario.nombreUsuario,
+                gmailUsuario: usuario.gmailUsuario,
+            },
+        });
 
     } catch (error) {
         console.error('Error en login:', error);
