@@ -95,8 +95,6 @@ export const actualizarCategoria = async (req, res) => {
 export const eliminarCategoria = async (req, res) => {
     const { idUsuario, idCategoria } = req.params;
 
-    console.log(`El idUsuario es: ${idUsuario}, El idCategoria es: ${idCategoria}`);
-
     try {
         if (!idUsuario || !idCategoria) {
             return res.status(400).json({ message: 'El idUsuario y idCategoria son obligatorios' });
