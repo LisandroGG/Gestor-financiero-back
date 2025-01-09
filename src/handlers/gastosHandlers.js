@@ -17,8 +17,13 @@ export const obtenerGastos = async (req, res) => {
             include: [
                 {
                     model: Categoria,
-                    as: 'categoria', // Este debe coincidir con el alias de la relación en el modelo
-                    attributes: ['nombreCategoria'], // Solo incluimos el campo 'nombre' de la categoría
+                    as: 'categoria',
+                    attributes: ['nombreCategoria'],
+                },
+                {
+                    model: Usuario,
+                    as: 'usuario',
+                    attributes: ['nombreUsuario']
                 }
             ]
         });
@@ -29,7 +34,6 @@ export const obtenerGastos = async (req, res) => {
 
         const gastosConCategoria = gastos.map(gasto => ({
             ...gasto.toJSON(),
-            nombreCategoria: gasto.categoria ? gasto.categoria.nombreCategoria : 'Sin categoría',
         }));
 
         return res.status(200).json(gastosConCategoria);
@@ -70,11 +74,6 @@ export const crearGasto = async (req, res) => {
             where: { idGasto: newGasto.idGasto },
             include: [
                 {
-                    model: Usuario,
-                    as: 'usuario',
-                    attributes: ['nombreUsuario']
-                },
-                {
                     model: Categoria,
                     as: 'categoria',
                     attributes: ['nombreCategoria']
@@ -94,7 +93,6 @@ export const crearGasto = async (req, res) => {
             message: 'Gasto creado exitosamente',
             gasto: {
                 cantidadGasto,
-                usuario: gastoConDetalles.usuario.nombreUsuario,
                 categoria: gastoConDetalles.categoria.nombreCategoria
             }
         });
