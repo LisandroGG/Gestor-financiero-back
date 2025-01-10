@@ -34,25 +34,31 @@ export const crearCategoria = async (req, res) => {
             return res.status(400).json({ message: 'Todos los campos son obligatorios' });
         }
 
+        // Validación de formato del nombre de la categoría
         if (!regexNombreCategoria.test(nombreCategoria)) {
             return res.status(400).json({ message: 'El nombre solo debe contener letras' });
         }
 
-        const categoriaNormalizada = nombreCategoria.trim().toLowerCase();
+        // Normalizar el nombre de la categoría
+        const categoriaNormalizada = nombreCategoria.trim().toLowerCase();  // Asegúrate de que esté en minúsculas
 
+        // Verificar si ya existe una categoría con el mismo nombre y usuario
         const existeCategoria = await Categoria.findOne({ 
             where: { 
-                nombreCategoria: categoriaNormalizada, 
-                idUsuario 
+                nombreCategoria: categoriaNormalizada,  // Usamos la versión normalizada
+                idUsuario
             }
         });
+
+        console.log(existeCategoria)
 
         if (existeCategoria) {
             return res.status(400).json({ message: 'Ya tienes esta categoría registrada.' });
         }
 
+        // Crear la nueva categoría
         const newCategoria = await Categoria.create({
-            nombreCategoria: nombreCategoria.trim(),
+            nombreCategoria: categoriaNormalizada,  // Guardamos el nombre normalizado
             idUsuario
         });
 
@@ -68,11 +74,31 @@ export const actualizarCategoria = async (req, res) => {
     const { idUsuario, idCategoria } = req.params;
     const { nombreCategoria } = req.body;
 
-    if (!idUsuario || !idCategoria || !nombreCategoria) {
-        return res.status(400).json({ message: 'El idUsuario, idCategoria y nombreCategoria son obligatorios.' });
-    }
 
+    console.log('Datos recibidos:', req.body);
+    console.log('Params:', req.params);
+    
     try {
+        
+        if (!idUsuario || !idCategoria || !nombreCategoria) {
+            return res.status(400).json({ message: 'El idUsuario, idCategoria y nombreCategoria son obligatorios.' });
+        }
+
+        // Normalizamos el nombre de la categoría
+        const categoriaNormalizada = nombreCategoria.trim().toLowerCase();
+
+        // Verificamos si ya existe una categoría con ese nombre para el mismo usuario
+        const existeCategoria = await Categoria.findOne({
+            where: {
+                nombreCategoria: categoriaNormalizada,
+                idUsuario,
+            },
+        });
+
+        if (existeCategoria && existeCategoria.idCategoria !== idCategoria) {
+            return res.status(400).json({ message: 'Ya tienes una categoría con ese nombre.' });
+        }
+
         const categoria = await Categoria.findOne({
             where: { idUsuario, idCategoria: idCategoria }
         });
