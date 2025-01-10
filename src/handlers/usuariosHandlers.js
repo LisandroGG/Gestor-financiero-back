@@ -98,9 +98,8 @@ export const loginUsuario = async (req, res) => {
             message: 'Sesion iniciada exitosamente',
             token: {
                 idUsuario: usuario.idUsuario,
-                nombreUsuario: usuario.nombreUsuario,
-                gmailUsuario: usuario.gmailUsuario,
-            },
+                nombreUsuario: usuario.nombreUsuario
+            }
         });
 
     } catch (error) {
@@ -120,5 +119,26 @@ export const logoutUsuario = async (req, res) => {
     } catch (error) {
         console.error('Error en logout:', error);
         res.status(500).json({ message: 'Error al intentar desconectar al usuario.' });
+    }
+};
+
+export const validarSesion = async (req, res) => {
+    try {
+        const token = req.cookies.access_token;
+        if (!token) {
+            return res.status(401).json({ message: 'No hay sesión activa.' });
+        }
+
+        const secretKey = process.env.JWT_SECRET_KEY;
+        const decoded = jwt.verify(token, secretKey);
+
+        return res.status(200).json({
+            idUsuario: decoded.idUsuario,
+            nombreUsuario: decoded.nombreUsuario,
+            gmailUsuario: decoded.gmailUsuario,
+        });
+    } catch (error) {
+        console.error('Error al validar sesión:', error);
+        return res.status(401).json({ message: 'Token inválido o expirado.' });
     }
 };
