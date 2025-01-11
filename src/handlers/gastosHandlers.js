@@ -48,53 +48,48 @@ export const crearGasto = async (req, res) => {
     const { idUsuario, idCategoria, cantidadGasto } = req.body;
 
     try {
+        // Validar datos básicos
         if (!cantidadGasto) {
             return res.status(400).json({ message: 'Debe tener una cantidad' });
         }
 
-        if (!regexNumeros.test(cantidadGasto)) {
-            return res.status(400).json({ message: 'Solo se permiten numeros' });
+        if (isNaN(Number(cantidadGasto)) || Number(cantidadGasto) <= 0) {
+            return res.status(400).json({ message: 'La cantidad debe ser un número válido mayor a 0' });
         }
 
         if (!idUsuario || !idCategoria) {
-            return res.status(400).json({ message: 'Se requieren los id de usuario y categoria' });
+            return res.status(400).json({ message: 'Se requieren los id de usuario y categoría' });
         }
 
-        const newGasto = await Gasto.create({
+        // Validar que el usuario exista
+        const usuario = await Usuario.findByPk(idUsuario);
+        if (!usuario) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        // Validar que la categoría exista y pertenezca al usuario
+        const categoria = await Categoria.findOne({
+            where: { idCategoria, idUsuario },
+        });
+        if (!categoria) {
+            return res.status(404).json({ message: 'Categoría no encontrada o no pertenece al usuario' });
+        }
+
+        // Crear el gasto
+        const nuevoGasto = await Gasto.create({
             cantidadGasto,
             idUsuario,
-            idCategoria
+            idCategoria,
         });
 
-        if (!newGasto) {
-            return res.status(500).json({ message: 'Error al crear el gasto en la base de datos' });
-        }
-
-        const gastoConDetalles = await Gasto.findOne({
-            where: { idGasto: newGasto.idGasto },
-            include: [
-                {
-                    model: Categoria,
-                    as: 'categoria',
-                    attributes: ['nombreCategoria']
-                }
-            ]
-        });
-
-        if (!gastoConDetalles) {
-            return res.status(404).json({ message: 'Gasto no encontrado después de la creación' });
-        }
-
-        if (!gastoConDetalles.usuario || !gastoConDetalles.categoria) {
-            return res.status(500).json({ message: 'Error al obtener los detalles del usuario o categoría' });
-        }
-
+        // Retornar respuesta con detalles
         return res.status(201).json({
             message: 'Gasto creado exitosamente',
             gasto: {
-                cantidadGasto,
-                categoria: gastoConDetalles.categoria.nombreCategoria
-            }
+                idGasto: nuevoGasto.idGasto,
+                cantidadGasto: nuevoGasto.cantidadGasto,
+                categoria: categoria.nombreCategoria,
+            },
         });
     } catch (error) {
         console.error(error);
@@ -106,12 +101,12 @@ export const actualizarGasto = async (req, res) => {
     const { idUsuario, idCategoria, idGasto } = req.params;
     const { cantidadGasto } = req.body; // Recibimos la cantidad del cuerpo de la solicitud
 
-    if (!idUsuario || !idCategoria || !idGasto) {
-        return res.status(400).json({ message: 'Los parámetros idUsuario, idCategoria e idGasto son obligatorios.' });
-    }
-
     try {
-        // Verificar si la categoría existe y pertenece al usuario
+        
+        if (!idUsuario || !idCategoria || !idGasto) {
+            return res.status(400).json({ message: 'Los parámetros idUsuario, idCategoria e idGasto son obligatorios.' });
+        }
+
         const categoria = await Categoria.findOne({
             where: {
                 idCategoria,
@@ -123,7 +118,6 @@ export const actualizarGasto = async (req, res) => {
             return res.status(404).json({ message: 'La categoría no existe o no pertenece a este usuario.' });
         }
 
-        // Verificar si el gasto existe
         const gasto = await Gasto.findOne({
             where: {
                 idGasto,
@@ -135,20 +129,17 @@ export const actualizarGasto = async (req, res) => {
             return res.status(404).json({ message: 'El gasto no existe o no pertenece a este usuario.' });
         }
 
-        // Actualizar la categoría del gasto si es necesario
         if (idCategoria) {
-            gasto.idCategoria = idCategoria; // Asignar la nueva categoría al gasto
+            gasto.idCategoria = idCategoria;
         }
 
-        // Validar y actualizar la cantidad del gasto si se proporciona
         if (cantidadGasto) {
             if (isNaN(cantidadGasto) || cantidadGasto <= 0) {
                 return res.status(400).json({ message: 'La cantidad del gasto debe ser un número válido mayor que 0.' });
             }
-            gasto.cantidadGasto = cantidadGasto; // Actualizar la cantidad del gasto
+            gasto.cantidadGasto = cantidadGasto;
         }
 
-        // Guardar los cambios
         await gasto.save();
 
         return res.status(200).json({ message: 'Gasto actualizado exitosamente', gasto });

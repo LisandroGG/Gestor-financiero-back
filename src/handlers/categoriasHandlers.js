@@ -73,10 +73,6 @@ export const crearCategoria = async (req, res) => {
 export const actualizarCategoria = async (req, res) => {
     const { idUsuario, idCategoria } = req.params;
     const { nombreCategoria } = req.body;
-
-
-    console.log('Datos recibidos:', req.body);
-    console.log('Params:', req.params);
     
     try {
         
@@ -84,10 +80,8 @@ export const actualizarCategoria = async (req, res) => {
             return res.status(400).json({ message: 'El idUsuario, idCategoria y nombreCategoria son obligatorios.' });
         }
 
-        // Normalizamos el nombre de la categoría
         const categoriaNormalizada = nombreCategoria.trim().toLowerCase();
 
-        // Verificamos si ya existe una categoría con ese nombre para el mismo usuario
         const existeCategoria = await Categoria.findOne({
             where: {
                 nombreCategoria: categoriaNormalizada,
