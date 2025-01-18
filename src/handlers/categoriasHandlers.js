@@ -1,4 +1,5 @@
 import { Categoria } from '../models/categorias.js'
+import { Gasto } from '../models/gastos.js'
 
 const regexNombreCategoria = /^[A-Za-z\s]+$/;
 
@@ -129,6 +130,16 @@ export const eliminarCategoria = async (req, res) => {
 
         if (!categoria) {
             return res.status(404).json({ message: 'Categoría no encontrada o no pertenece a este usuario' });
+        }
+
+        const gastosAsociados = await Gasto.findAll({
+            where: {
+                idCategoria: idCategoria
+            }
+        });
+
+        if (gastosAsociados.length > 0) {
+            return res.status(400).json({ message: 'No se puede eliminar la categoría porque hay gastos asociados a ella.' });
         }
 
         await categoria.destroy();
