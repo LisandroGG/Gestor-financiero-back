@@ -142,3 +142,30 @@ export const validarSesion = async (req, res) => {
         return res.status(401).json({ message: 'Token inválido o expirado.' });
     }
 };
+
+export const actualizarContraseña = async (req, res) => {
+    const { idUsuario } = req.params;
+    const { nuevaContraseña } = req.body;
+
+    if(!nuevaContraseña) {
+        return res.status(400).json({ message: 'Introduzca su nueva contraseña'})
+    }
+
+    if (!regexPassword.test(nuevaContraseña)) {
+        return res.status(400).json({ message: 'La contraseña debe tener al menos una mayúscula, una minúscula, un número y un carácter especial.' });
+    }
+
+    try {
+        const saltRounds = 10;
+        const hash = await bcrypt.hash(nuevaContraseña, saltRounds);
+
+        await Usuario.update(
+            { contraseñaUsuario: hash },
+            { where: { idUsuario } }
+        );
+
+        res.json({ message: "Contraseña actualizada correctamente" });
+    } catch (error) {
+        res.status(500).json({ error: "Error al actualizar la contraseña" });
+    }
+};
