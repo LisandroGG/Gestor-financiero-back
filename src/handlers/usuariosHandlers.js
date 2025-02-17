@@ -154,6 +154,10 @@ export const validarSesion = async (req, res) => {
 export const enviarCorreoRecuperacion = async (req, res) => {
     const { gmailUsuario } = req.body;
 
+    if (!regexEmail.test(gmailUsuario)) {
+        return res.status(400).json({ message: 'El correo electrónico debe ser un Gmail válido.' });
+    }
+
     try {
         const usuario = await Usuario.findOne({ where: { gmailUsuario } });
         if(!usuario) return res.status(404).json({ message: "Usuario no encontrado"})
@@ -166,7 +170,7 @@ export const enviarCorreoRecuperacion = async (req, res) => {
             subject: 'Cambiar contraseña',
             html:`
             <p>Haz clic en el siguiente enlace para cambiar tu contraseña: </p>
-            <a href="${process.env.LOCAL}/resetPassword?token=${token}">Cambiar contraseña</a>
+            <a href="${process.env.LOCAL}/changePassword?token=${token}">Cambiar contraseña</a>
             <p>Este enlace caducara en 15 minutos</p>
             `
         })
@@ -186,6 +190,13 @@ export const cambiarContraseña = async (req, res) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY)
         const usuario = await Usuario.findByPk(decoded.idUsuario);
         if(!usuario) return res.status(404).json({ message: "Usuario no encontrado"})
+
+        if(!nuevaContraseña) {
+            return res.status(400).json({ message: 'Ingrese una contraseña para iniciar sesion'})
+        }
+        if (!regexPassword.test(nuevaContraseña)) {
+            return res.status(400).json({ message: 'La contraseña debe tener al menos una mayúscula, una minúscula, un número y un carácter especial.' });
+        }
 
         const salt = await bcrypt.genSalt(10);
         usuario.contraseñaUsuario = await bcrypt.hash(nuevaContraseña, salt);

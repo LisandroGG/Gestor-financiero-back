@@ -7,5 +7,5 @@ usuarioRouter.post('/register', registerUsuario);
 usuarioRouter.get('/validarSesion', validarSesion)
 usuarioRouter.post('/login', loginUsuario);
 usuarioRouter.post('/logout', logoutUsuario);
-usuarioRouter.post('/forgotPassword/', enviarCorreoRecuperacion);
-usuarioRouter.put('/resetPassword', cambiarContraseña);
+usuarioRouter.post('/forgotPassword', enviarCorreoRecuperacion);
+usuarioRouter.put('/changePassword', cambiarContraseña);
