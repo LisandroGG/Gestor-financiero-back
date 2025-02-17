@@ -1,6 +1,7 @@
 import { Usuario } from "../models/usuarios.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
+import { transporter } from "../config/mailer.js";
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -43,7 +44,17 @@ export const registerUsuario = async (req, res) => {
             contraseñaUsuario,
         });
 
+        await transporter.sendMail({
+            from: 'gestorfinanciero1308@gmail.com',
+            to: gmailUsuario,
+            subject: `Bienvenido ${nombreUsuario} a Gestor Financiero`,
+            html: `
+            <b>Hola bienvenido a gestor financiero</b>
+            `
+        })
+
         return res.status(201).json(newUsuario);
+        
 
     } catch (error) {
         console.error('Error al crear usuario:', error);
