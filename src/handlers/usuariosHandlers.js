@@ -95,9 +95,7 @@ export const loginUsuario = async (req, res) => {
             gmailUsuario: usuario.gmailUsuario,
         };
 
-        const secretKey = process.env.JWT_SECRET_KEY; // Puedes guardar la clave secreta en .env
-
-        const token = jwt.sign(payload, secretKey, { expiresIn: '1h' }); // El token expira en 1 hora
+        const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: '1h' }); // El token expira en 1 hora
 
         return res.cookie('access_token', token, {
             httpOnly: true,
@@ -140,8 +138,7 @@ export const validarSesion = async (req, res) => {
             return res.status(401).json({ message: 'No hay sesión activa.' });
         }
 
-        const secretKey = process.env.JWT_SECRET_KEY;
-        const decoded = jwt.verify(token, secretKey);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
         return res.status(200).json({
             idUsuario: decoded.idUsuario,
@@ -154,29 +151,60 @@ export const validarSesion = async (req, res) => {
     }
 };
 
-export const actualizarContraseña = async (req, res) => {
-    const { idUsuario } = req.params;
-    const { nuevaContraseña } = req.body;
-
-    if(!nuevaContraseña) {
-        return res.status(400).json({ message: 'Introduzca su nueva contraseña'})
-    }
-
-    if (!regexPassword.test(nuevaContraseña)) {
-        return res.status(400).json({ message: 'La contraseña debe tener al menos una mayúscula, una minúscula, un número y un carácter especial.' });
-    }
+export const enviarCorreoRecuperacion = async (req, res) => {
+    const { gmailUsuario } = req.body;
 
     try {
-        const saltRounds = 10;
-        const hash = await bcrypt.hash(nuevaContraseña, saltRounds);
+        const usuario = await Usuario.findOne({ where: { gmailUsuario } });
+        if(!usuario) return res.status(404).json({ message: "Usuario no encontrado"})
+        
+        const token = jwt.sign({ idUsuario: usuario.idUsuario}, process.env.JWT_SECRET_KEY, { expiresIn: '15m' })
 
-        await Usuario.update(
-            { contraseñaUsuario: hash },
-            { where: { idUsuario } }
-        );
+        await transporter.sendMail({
+            from: 'gestorfinanciero1308@gmail.com',
+            to: `${gmailUsuario}`,
+            subject: 'Cambiar contraseña',
+            html:`
+            <p>Haz clic en el siguiente enlace para cambiar tu contraseña: </p>
+            <a href="${process.env.LOCAL}/resetPassword?token=${token}">Cambiar contraseña</a>
+            <p>Este enlace caducara en 15 minutos</p>
+            `
+        })
 
-        res.json({ message: "Contraseña actualizada correctamente" });
+        return res.status(200).json({ message: "Correo enviado correctamente"})
     } catch (error) {
-        res.status(500).json({ error: "Error al actualizar la contraseña" });
+        console.log(error)
+        res.status(500).json({ message: "Error al enviar mail de recuperacion"})
     }
-};
+}
+
+export const cambiarContraseña = async (req, res) => {
+    const { token } = req.query;
+    const { nuevaContraseña } = req.body;
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY)
+        const usuario = await Usuario.findByPk(decoded.idUsuario);
+        if(!usuario) return res.status(404).json({ message: "Usuario no encontrado"})
+
+        const salt = await bcrypt.genSalt(10);
+        usuario.contraseñaUsuario = await bcrypt.hash(nuevaContraseña, salt);
+
+        await usuario.save()
+
+        await transporter.sendMail({
+            from: 'gestorfinanciero1308@gmail.com',
+            to: `${usuario.gmailUsuario}`,
+            subject: 'Contraseña actualizada correctamente',
+            html:`
+            <p>Haz actualizado tu contraseña</p>
+            <a href="${process.env.LOCAL}/login">Inicia Sesion</a>
+            `
+        })
+
+        res.json({ message: "Contraseña actualizada correctamente"})
+
+    } catch (error) {
+        res.status(400).json({ message: "Token invalido o expirado"})
+    }
+}
