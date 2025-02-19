@@ -27,11 +27,6 @@ export const registerUsuario = async (req, res) => {
             return res.status(400).json({ message: 'La contraseña debe tener al menos una mayúscula, una minúscula, un número y un carácter especial.' });
         }
 
-        const existingUser = await Usuario.findOne({ where: { nombreUsuario } });
-        if (existingUser) {
-            return res.status(400).json({ message: 'El nombre de usuario ya está registrado.' });
-        }
-
         const usuario = await Usuario.findOne({ where: { gmailUsuario } });
 
         if(usuario) {
@@ -107,7 +102,8 @@ export const loginUsuario = async (req, res) => {
             message: 'Sesion iniciada exitosamente',
             token: {
                 idUsuario: usuario.idUsuario,
-                nombreUsuario: usuario.nombreUsuario
+                nombreUsuario: usuario.nombreUsuario,
+                gmailUsuario: usuario.gmailUsuario
             }
         });
 
