@@ -71,7 +71,7 @@ export const loginUsuario = async (req, res) => {
         if (!gmailUsuario) {
             return res.status(400).json({ message: 'Ingrese un gmail para poder iniciar sesion' });
         }
-        const usuario = await Usuario.findOne({ where: { gmailUsuario }, attributes: ['idUsuario', 'nombreUsuario', 'gmailUsuario', 'contraseñaUsuario', 'verificado'] });
+        const usuario = await Usuario.findOne({ where: { gmailUsuario } });
 
         if (!usuario) {
             return res.status(404).json({ message: 'Ese gmail no esta registrado' });
