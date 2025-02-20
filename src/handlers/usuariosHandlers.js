@@ -37,18 +37,24 @@ export const registerUsuario = async (req, res) => {
             nombreUsuario,
             gmailUsuario,
             contraseñaUsuario,
+            verificado: false,
         });
+
+        const token = jwt.sign({ gmailUsuario }, process.env.JWT_SECRET_KEY, { expiresIn: '1d' });
 
         await transporter.sendMail({
             from: 'gestorfinanciero1308@gmail.com',
             to: gmailUsuario,
-            subject: `Bienvenido ${nombreUsuario} a Gestor Financiero`,
+            subject: `Verificacion de cuenta ${nombreUsuario} para Gestor Financiero`,
             html: `
             <b>Hola bienvenido a gestor financiero</b>
+            <p>Para verificar tu cuenta, haz clic en el siguiente enlace:</p>
+            <a href="${process.env.LOCAL}/verificar?token=${token}">Verificar cuenta</a>
+            <p>Este enlace expirará en 24 horas.</p>
             `
         })
 
-        return res.status(201).json(newUsuario);
+    return res.status(200).json({ message: 'Usuario registrado. Se envió un correo de verificación.' });
         
 
     } catch (error) {
@@ -65,10 +71,14 @@ export const loginUsuario = async (req, res) => {
         if (!gmailUsuario) {
             return res.status(400).json({ message: 'Ingrese un gmail para poder iniciar sesion' });
         }
-        const usuario = await Usuario.findOne({ where: { gmailUsuario }, attributes: ['idUsuario', 'nombreUsuario', 'gmailUsuario', 'contraseñaUsuario'] });
+        const usuario = await Usuario.findOne({ where: { gmailUsuario }, attributes: ['idUsuario', 'nombreUsuario', 'gmailUsuario', 'contraseñaUsuario', 'verificado'] });
 
         if (!usuario) {
             return res.status(404).json({ message: 'Ese gmail no esta registrado' });
+        }
+
+        if (!usuario.verificado) {
+            return res.status(400).json({ message: 'Debes verificar tu cuenta antes de iniciar sesión.' });
         }
 
         if(!contraseñaUsuario) {
@@ -157,6 +167,7 @@ export const enviarCorreoRecuperacion = async (req, res) => {
     try {
         const usuario = await Usuario.findOne({ where: { gmailUsuario } });
         if(!usuario) return res.status(404).json({ message: "Usuario no encontrado"})
+        if(!usuario.verificado) return res.status(404).json({ message: "El usuario debe estar verificado"})
         
         const token = jwt.sign({ idUsuario: usuario.idUsuario}, process.env.JWT_SECRET_KEY, { expiresIn: '15m' })
 
@@ -213,5 +224,43 @@ export const cambiarContraseña = async (req, res) => {
 
     } catch (error) {
         res.status(400).json({ message: "Token invalido o expirado"})
+    }
+}
+
+export const verificarCuenta = async(req, res) => {
+    const { token } = req.query;
+
+    try {
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+        const usuario = await Usuario.findOne({ where: { gmailUsuario: decoded.gmailUsuario } });
+
+        if (!usuario) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        if (usuario.verificado) {
+            return res.status(400).json({ message: 'El usuario ya está verificado.' });
+        }
+
+        usuario.verificado = true;
+        await usuario.save();
+
+        await transporter.sendMail({
+            from: 'gestorfinanciero1308@gmail.com',
+            to: `${usuario.gmailUsuario}`,
+            subject: `Se ha verificado tu cuenta ${usuario.nombreUsuario}`,
+            html:`
+            <b>Has verificado tu cuenta</b>
+            `
+        })
+
+        return res.status(200).json({ message: 'Cuenta verificada correctamente.' });
+
+
+    } catch (error) {
+        console.error('Error al verificar cuenta:', error);
+        return res.status(400).json({ message: 'Token inválido o expirado.' });
     }
 }

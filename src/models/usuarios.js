@@ -18,6 +18,10 @@ export const Usuario = sequelize.define(
         },
         gmailUsuario: {
             type: DataTypes.STRING
+        },
+        verificado: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
         }
         
     },{
