@@ -1,7 +1,7 @@
 import { Usuario } from "../models/usuarios.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
-import { transporter } from "../config/mailer.js";
+import { sendChangedPasswordEmail, sendForgotPasswordMail, sendVerifiedAccountEmail, sendVerifyMail } from "../config/mailer.js";
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -40,19 +40,11 @@ export const registerUsuario = async (req, res) => {
             verificado: false,
         });
 
-        const token = jwt.sign({ gmailUsuario }, process.env.JWT_SECRET_KEY, { expiresIn: '1d' });
+        const sendEmail = await sendVerifyMail(nombreUsuario, gmailUsuario)
 
-        await transporter.sendMail({
-            from: 'gestorfinanciero1308@gmail.com',
-            to: gmailUsuario,
-            subject: `Verificacion de cuenta ${nombreUsuario} para Gestor Financiero`,
-            html: `
-            <b>Hola bienvenido a gestor financiero</b>
-            <p>Para verificar tu cuenta, haz clic en el siguiente enlace:</p>
-            <a href="${process.env.LOCAL}/verificar?token=${token}">Verificar cuenta</a>
-            <p>Este enlace expirará en 24 horas.</p>
-            `
-        })
+        if(sendEmail === false){
+            res.status(400).json({ message: "Error enviar el mail de verificacion"})
+        }
 
     return res.status(200).json({ message: 'Usuario registrado. Se envió un correo de verificación.' });
         
@@ -71,7 +63,7 @@ export const loginUsuario = async (req, res) => {
         if (!gmailUsuario) {
             return res.status(400).json({ message: 'Ingrese un gmail para poder iniciar sesion' });
         }
-        const usuario = await Usuario.findOne({ where: { gmailUsuario } });
+        const usuario = await Usuario.findOne({ where: { gmailUsuario }, attributes: ['idUsuario', 'nombreUsuario', 'gmailUsuario', 'contraseñaUsuario', 'verificado'] });
 
         if (!usuario) {
             return res.status(404).json({ message: 'Ese gmail no esta registrado' });
@@ -168,19 +160,12 @@ export const enviarCorreoRecuperacion = async (req, res) => {
         const usuario = await Usuario.findOne({ where: { gmailUsuario } });
         if(!usuario) return res.status(404).json({ message: "Usuario no encontrado"})
         if(!usuario.verificado) return res.status(404).json({ message: "El usuario debe estar verificado"})
-        
-        const token = jwt.sign({ idUsuario: usuario.idUsuario}, process.env.JWT_SECRET_KEY, { expiresIn: '15m' })
 
-        await transporter.sendMail({
-            from: 'gestorfinanciero1308@gmail.com',
-            to: `${gmailUsuario}`,
-            subject: 'Cambiar contraseña',
-            html:`
-            <p>Haz clic en el siguiente enlace para cambiar tu contraseña: </p>
-            <a href="${process.env.LOCAL}/changePassword?token=${token}">Cambiar contraseña</a>
-            <p>Este enlace caducara en 15 minutos</p>
-            `
-        })
+        const sentEmail = await sendForgotPasswordMail(usuario, gmailUsuario)
+
+        if(sentEmail === false){
+            return res.status(400).json({ message: "Error enviar el mail de recuperacion"})
+        }
 
         return res.status(200).json({ message: "Correo enviado correctamente"})
     } catch (error) {
@@ -210,15 +195,11 @@ export const cambiarContraseña = async (req, res) => {
 
         await usuario.save()
 
-        await transporter.sendMail({
-            from: 'gestorfinanciero1308@gmail.com',
-            to: `${usuario.gmailUsuario}`,
-            subject: 'Contraseña actualizada correctamente',
-            html:`
-            <p>Haz actualizado tu contraseña</p>
-            <a href="${process.env.LOCAL}/login">Inicia Sesion</a>
-            `
-        })
+        const sentEmail = await sendChangedPasswordEmail(usuario.nombreUsuario, usuario.gmailUsuario)
+
+        if(sentEmail === false){
+            return res.status(400).json({ message: "Error al enviar correo de contraseña cambiada"})
+        }
 
         res.json({ message: "Contraseña actualizada correctamente"})
 
@@ -247,14 +228,11 @@ export const verificarCuenta = async(req, res) => {
         usuario.verificado = true;
         await usuario.save();
 
-        await transporter.sendMail({
-            from: 'gestorfinanciero1308@gmail.com',
-            to: `${usuario.gmailUsuario}`,
-            subject: `Se ha verificado tu cuenta ${usuario.nombreUsuario}`,
-            html:`
-            <b>Has verificado tu cuenta</b>
-            `
-        })
+        const sentEmail = await sendVerifiedAccountEmail(usuario.nombreUsuario, usuario.gmailUsuario)
+
+        if(sentEmail === false){
+            return res.status(400).json({ message: "Error al enviar correo de cuenta verificada"})
+        }
 
         return res.status(200).json({ message: 'Cuenta verificada correctamente.' });
 
