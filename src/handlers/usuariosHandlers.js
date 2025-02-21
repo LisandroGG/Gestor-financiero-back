@@ -24,7 +24,7 @@ export const registerUsuario = async (req, res) => {
         }
 
         if (!regexPassword.test(contraseñaUsuario)) {
-            return res.status(400).json({ message: 'La contraseña debe tener al menos una mayúscula, una minúscula, un número y un carácter especial.' });
+            return res.status(400).json({ message: 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.' });
         }
 
         const usuario = await Usuario.findOne({ where: { gmailUsuario } });
