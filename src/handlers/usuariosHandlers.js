@@ -43,7 +43,7 @@ export const registerUsuario = async (req, res) => {
         const sendEmail = await sendVerifyMail(nombreUsuario, gmailUsuario)
 
         if(sendEmail === false){
-            res.status(400).json({ message: "Error enviar el mail de verificacion"})
+            res.status(400).json({ message: "Error al enviar el mail de verificacion"})
         }
 
     return res.status(200).json({ message: 'Usuario registrado. Se envió un correo de verificación.' });
@@ -59,10 +59,15 @@ export const loginUsuario = async (req, res) => {
     const { gmailUsuario, contraseñaUsuario } = req.body;
 
     try {
-        // Buscar el usuario por su email
         if (!gmailUsuario) {
             return res.status(400).json({ message: 'Ingrese un gmail para poder iniciar sesion' });
         }
+
+        if (!regexEmail.test(gmailUsuario)) {
+            return res.status(400).json({ message: 'El correo electrónico debe ser un Gmail válido.' });
+        }
+
+        
         const usuario = await Usuario.findOne({ where: { gmailUsuario }, attributes: ['idUsuario', 'nombreUsuario', 'gmailUsuario', 'contraseñaUsuario', 'verificado'] });
 
         if (!usuario) {
@@ -152,11 +157,12 @@ export const validarSesion = async (req, res) => {
 export const enviarCorreoRecuperacion = async (req, res) => {
     const { gmailUsuario } = req.body;
 
-    if (!regexEmail.test(gmailUsuario)) {
-        return res.status(400).json({ message: 'El correo electrónico debe ser un Gmail válido.' });
-    }
-
     try {
+
+        if (!regexEmail.test(gmailUsuario)) {
+            return res.status(400).json({ message: 'El correo electrónico debe ser un Gmail válido.' });
+        }
+
         const usuario = await Usuario.findOne({ where: { gmailUsuario } });
         if(!usuario) return res.status(404).json({ message: "Usuario no encontrado"})
         if(!usuario.verificado) return res.status(404).json({ message: "El usuario debe estar verificado"})
@@ -167,7 +173,7 @@ export const enviarCorreoRecuperacion = async (req, res) => {
             return res.status(400).json({ message: "Error enviar el mail de recuperacion"})
         }
 
-        return res.status(200).json({ message: "Correo enviado correctamente"})
+        return res.status(200).json({ message: "Se envio un correo de restablecer contraseña"})
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: "Error al enviar mail de recuperacion"})
@@ -184,7 +190,7 @@ export const cambiarContraseña = async (req, res) => {
         if(!usuario) return res.status(404).json({ message: "Usuario no encontrado"})
 
         if(!nuevaContraseña) {
-            return res.status(400).json({ message: 'Ingrese una contraseña para iniciar sesion'})
+            return res.status(400).json({ message: 'Ingrese una contraseña para cambiar'})
         }
         if (!regexPassword.test(nuevaContraseña)) {
             return res.status(400).json({ message: 'La contraseña debe tener al menos una mayúscula, una minúscula, un número y un carácter especial.' });
@@ -241,4 +247,32 @@ export const verificarCuenta = async(req, res) => {
         console.error('Error al verificar cuenta:', error);
         return res.status(400).json({ message: 'Token inválido o expirado.' });
     }
+}
+
+export const reenviarRecuperacion = async(req, res) => {
+    const { gmailUsuario } = req.body
+    try {
+        if (!gmailUsuario) {
+            return res.status(400).json({ message: 'Ingrese un gmail para poder iniciar sesion' });
+        }
+    
+        if (!regexEmail.test(gmailUsuario)) {
+            return res.status(400).json({ message: 'El correo electrónico debe ser un Gmail válido.' });
+        }
+
+        const usuario = await Usuario.findOne({ where: { gmailUsuario } });
+        if(!usuario) return res.status(404).json({ message: "Usuario no encontrado"})
+
+        const sendEmail = await sendVerifyMail(usuario.nombreUsuario, gmailUsuario)
+
+        if(sendEmail === false){
+            res.status(400).json({ message: "Error al enviar el mail de verificacion"})
+        }
+
+        return res.status(200).json({ message: 'Se envió un correo de verificación.' });
+
+    } catch (error) {
+        return res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+
 }
