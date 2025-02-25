@@ -27,10 +27,12 @@ export const sendVerifyMail = async( nombreUsuario, gmailUsuario ) => {
             to: gmailUsuario,
             subject: `Verificacion de cuenta ${nombreUsuario} para Gestor Financiero`,
             html: `
-            <b>Hola bienvenido a gestor financiero</b>
-            <p>Para verificar tu cuenta, haz clic en el siguiente enlace:</p>
-            <a href="${process.env.LOCAL}/verificar?token=${token}">Verificar cuenta</a>
-            <p>Este enlace expirará en 24 horas.</p>
+            <div style="text-align: center; color: black; background: #f1f1f1; padding: 20px;">
+                <h2 >Hola ${nombreUsuario} bienvenido a gestor financiero</h2>
+                <h3>Para verificar tu cuenta, haz clic en el siguiente enlace:</h3>
+                <span><a style="text-decoration: none; color: white; background: #0ea5e9;padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold" href="${process.env.LOCAL}/verificar?token=${token}">Verificar cuenta</a></span>
+                <h4>Este enlace expirará en 24 horas.</h4>
+            </div>
             `
         })
 
