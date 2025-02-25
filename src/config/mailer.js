@@ -52,8 +52,8 @@ export const sendForgotPasswordMail = async(usuario, gmailUsuario) => {
             to: `${gmailUsuario}`,
             subject: 'Cambiar contraseña',
             html:`
-            <div style="text-align: center; color: black; background: #f1f1f1; padding: 20px;">
-                <h2>${nombreUsuario} haz clic en el siguiente enlace para cambiar tu contraseña: </h2>
+            <div style="text-align: center; color: black; background: #f1f1f1; padding: 40px;">
+                <h2>${usuario.nombreUsuario} haz clic en el siguiente enlace para cambiar tu contraseña: </h2>
                 <a style="text-decoration: none; color: white; background: #0ea5e9;padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold" 
                 href="${process.env.LOCAL}/changePassword?token=${token}">Cambiar contraseña</a>
                 <h4>Este enlace caducara en 15 minutos</h4>
@@ -75,8 +75,8 @@ export const sendChangedPasswordEmail = async(nombreUsuario, gmailUsuario) => {
             to: `${gmailUsuario}`,
             subject: `${nombreUsuario} se ha actualizado tu contraseña`,
             html:`
-            <div style="text-align: center; color: black; background: #f1f1f1; padding: 20px;">
-                <h2>${nombreUsuario} haz actualizado tu contraseña</h2>
+            <div style="text-align: center; color: black; background: #f1f1f1; padding: 40px;">
+                <h2>${nombreUsuario} has actualizado tu contraseña</h2>
                 <a style="text-decoration: none; color: white; background: #0ea5e9;padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold"
                 href="${process.env.LOCAL}/login">Inicia Sesion</a>
             </div>
@@ -97,7 +97,7 @@ export const sendVerifiedAccountEmail = async(nombreUsuario, gmailUsuario) => {
             to: `${gmailUsuario}`,
             subject: `${nombreUsuario} se ha verificado tu cuenta`,
             html:`
-            <div style="text-align: center; color: black; background: #f1f1f1; padding: 20px;">
+            <div style="text-align: center; color: black; background: #f1f1f1; padding: 40px;">
                 <h2>${nombreUsuario} has verificado tu cuenta</h2>
                 <a style="text-decoration: none; color: white; background: #0ea5e9;padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold"
                 href="${process.env.LOCAL}/login">Inicia Sesion</a>

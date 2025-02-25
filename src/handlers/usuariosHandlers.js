@@ -176,7 +176,7 @@ export const enviarCorreoRecuperacion = async (req, res) => {
         return res.status(200).json({ message: "Se envio un correo de restablecer contraseña"})
     } catch (error) {
         console.log(error)
-        res.status(500).json({ message: "Error al enviar mail de recuperacion"})
+        res.status(500).json({ message: "Error al enviar mail de recuperacion (server)"})
     }
 }
 
