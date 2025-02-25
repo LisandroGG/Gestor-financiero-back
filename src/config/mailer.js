@@ -30,7 +30,8 @@ export const sendVerifyMail = async( nombreUsuario, gmailUsuario ) => {
             <div style="text-align: center; color: black; background: #f1f1f1; padding: 20px;">
                 <h2 >Hola ${nombreUsuario} bienvenido a gestor financiero</h2>
                 <h3>Para verificar tu cuenta, haz clic en el siguiente enlace:</h3>
-                <span><a style="text-decoration: none; color: white; background: #0ea5e9;padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold" href="${process.env.LOCAL}/verificar?token=${token}">Verificar cuenta</a></span>
+                <a style="text-decoration: none; color: white; background: #0ea5e9;padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold" 
+                href="${process.env.LOCAL}/verificar?token=${token}">Verificar cuenta</a>
                 <h4>Este enlace expirará en 24 horas.</h4>
             </div>
             `
@@ -51,9 +52,12 @@ export const sendForgotPasswordMail = async(usuario, gmailUsuario) => {
             to: `${gmailUsuario}`,
             subject: 'Cambiar contraseña',
             html:`
-            <p>Haz clic en el siguiente enlace para cambiar tu contraseña: </p>
-            <a href="${process.env.LOCAL}/changePassword?token=${token}">Cambiar contraseña</a>
-            <p>Este enlace caducara en 15 minutos</p>
+            <div style="text-align: center; color: black; background: #f1f1f1; padding: 20px;">
+                <h2>${nombreUsuario} haz clic en el siguiente enlace para cambiar tu contraseña: </h2>
+                <a style="text-decoration: none; color: white; background: #0ea5e9;padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold" 
+                href="${process.env.LOCAL}/changePassword?token=${token}">Cambiar contraseña</a>
+                <h4>Este enlace caducara en 15 minutos</h4>
+            </div>
             `
         })
 
@@ -71,8 +75,11 @@ export const sendChangedPasswordEmail = async(nombreUsuario, gmailUsuario) => {
             to: `${gmailUsuario}`,
             subject: `${nombreUsuario} se ha actualizado tu contraseña`,
             html:`
-            <p>Haz actualizado tu contraseña</p>
-            <a href="${process.env.LOCAL}/login">Inicia Sesion</a>
+            <div style="text-align: center; color: black; background: #f1f1f1; padding: 20px;">
+                <h2>${nombreUsuario} haz actualizado tu contraseña</h2>
+                <a style="text-decoration: none; color: white; background: #0ea5e9;padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold"
+                href="${process.env.LOCAL}/login">Inicia Sesion</a>
+            </div>
             `
         })
 
@@ -90,8 +97,11 @@ export const sendVerifiedAccountEmail = async(nombreUsuario, gmailUsuario) => {
             to: `${gmailUsuario}`,
             subject: `${nombreUsuario} se ha verificado tu cuenta`,
             html:`
-            <b>Has verificado tu cuenta</b>
-            <a href="${process.env.LOCAL}/login">Inicia Sesion</a>
+            <div style="text-align: center; color: black; background: #f1f1f1; padding: 20px;">
+                <h2>${nombreUsuario} has verificado tu cuenta</h2>
+                <a style="text-decoration: none; color: white; background: #0ea5e9;padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold"
+                href="${process.env.LOCAL}/login">Inicia Sesion</a>
+            </div>
             `
         })
 
