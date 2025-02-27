@@ -50,7 +50,7 @@ export const crearGasto = async (req, res) => {
     try {
         // Validar datos básicos
         if (!cantidadGasto) {
-            return res.status(400).json({ message: 'Debe tener una cantidad' });
+            return res.status(400).json({ message: 'Debes introducir un monto' });
         }
 
         if (isNaN(Number(cantidadGasto)) || Number(cantidadGasto) <= 0) {

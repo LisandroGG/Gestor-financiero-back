@@ -57,9 +57,8 @@ export const crearCategoria = async (req, res) => {
             return res.status(400).json({ message: 'Ya tienes esta categoría registrada.' });
         }
 
-        // Crear la nueva categoría
         const newCategoria = await Categoria.create({
-            nombreCategoria: categoriaNormalizada,  // Guardamos el nombre normalizado
+            nombreCategoria: categoriaNormalizada,
             idUsuario
         });
 
