@@ -25,10 +25,10 @@ export const sendVerifyMail = async( nombreUsuario, gmailUsuario ) => {
         await transporter.sendMail({
             from: `${MAILER_USER}`,
             to: gmailUsuario,
-            subject: `Verificacion de cuenta ${nombreUsuario} para Gestor Financiero`,
+            subject: `Verificacion de cuenta ${nombreUsuario} para GastoCero`,
             html: `
             <div style="text-align: center; color: black; background: #f1f1f1; padding: 20px;">
-                <h2 >Hola ${nombreUsuario} bienvenido a gestor financiero</h2>
+                <h2 >Hola ${nombreUsuario} bienvenido a GastoCero</h2>
                 <h3>Para verificar tu cuenta, haz clic en el siguiente enlace:</h3>
                 <a style="text-decoration: none; color: white; background: #0ea5e9;padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold" 
                 href="${process.env.LOCAL}/verificar?token=${token}">Verificar cuenta</a>
