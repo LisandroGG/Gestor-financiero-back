@@ -40,6 +40,10 @@ export const crearCategoria = async (req, res) => {
             return res.status(400).json({ message: 'El nombre solo debe contener letras' });
         }
 
+        if(nombreCategoria.length > 30) {
+            return res.status(400).json({ message: 'El nombre es muy largo'})
+        }
+
         // Normalizar el nombre de la categoría
         const categoriaNormalizada = nombreCategoria.trim().toLowerCase();  // Asegúrate de que esté en minúsculas
 
@@ -76,8 +80,12 @@ export const actualizarCategoria = async (req, res) => {
     
     try {
         
-        if (!idUsuario || !idCategoria || !nombreCategoria) {
-            return res.status(400).json({ message: 'El idUsuario, idCategoria y nombreCategoria son obligatorios.' });
+        if (!idUsuario || !idCategoria) {
+            return res.status(400).json({ message: 'El idUsuario y idCategoria no encontrados' });
+        }
+
+        if(!nombreCategoria) {
+            return res.status(400).json({ message: 'El nombre no puede estar vacio'})
         }
 
         const categoriaNormalizada = nombreCategoria.trim().toLowerCase();
