@@ -39,7 +39,6 @@ export const obtenerGastos = async (req, res) => {
         return res.status(200).json(gastosConCategoria);
 
     } catch (error) {
-        console.log('Error al obtener gastos', error);
         return res.status(500).json({ message: 'Error interno del servidor' });
     }
 };
@@ -107,6 +106,10 @@ export const actualizarGasto = async (req, res) => {
             return res.status(400).json({ message: 'Los parámetros idUsuario, idCategoria e idGasto son obligatorios.' });
         }
 
+        if (isNaN(Number(cantidadGasto)) || Number(cantidadGasto) <= 0) {
+            return res.status(400).json({ message: 'La cantidad debe ser un número válido mayor a 0' });
+        }
+
         const categoria = await Categoria.findOne({
             where: {
                 idCategoria,
@@ -134,15 +137,12 @@ export const actualizarGasto = async (req, res) => {
         }
 
         if (cantidadGasto) {
-            if (isNaN(cantidadGasto) || cantidadGasto <= 0) {
-                return res.status(400).json({ message: 'La cantidad del gasto debe ser un número válido mayor que 0.' });
-            }
             gasto.cantidadGasto = cantidadGasto;
         }
 
         await gasto.save();
 
-        return res.status(200).json({ message: 'Gasto actualizado exitosamente', gasto });
+        return res.status(200).json({ message: 'Gasto actualizado con éxito', gasto });
 
     } catch (error) {
         console.log('Error al actualizar gasto', error);
