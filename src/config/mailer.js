@@ -27,14 +27,27 @@ export const sendVerifyMail = async( nombreUsuario, gmailUsuario ) => {
             to: gmailUsuario,
             subject: `Verificacion de cuenta ${nombreUsuario} para GastoCero`,
             html: `
-            <div style="text-align: center; color: black; background: #f1f1f1; padding: 20px;">
-                <h2 >Hola ${nombreUsuario} bienvenido a GastoCero</h2>
-                <h3>Para verificar tu cuenta, haz clic en el siguiente enlace:</h3>
-                <a style="text-decoration: none; color: white; background: #0ea5e9;padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold" 
-                href="${process.env.LOCAL}/verificar?token=${token}">Verificar cuenta</a>
-                <h4>Este enlace expirará en 24 horas.</h4>
-            </div>
-            `
+                <table width="100%" cellspacing="0" cellpadding="0" style="padding: 20px;">
+                    <tr>
+                    <td align="center">
+                        <table width="600" cellspacing="0" cellpadding="0" style="background: #f1f1f1; padding: 20px; text-align: center;">
+                        <tr>
+                            <td>
+                            <h2>Hola ${nombreUsuario}, bienvenido a <span style="color: #0ea5e9">GastoCero</span></h2>
+                            <img src="https://imgs.search.brave.com/Nlz7L8RZaFdD-9KWUk4T4NCrt8IaZg-dS01VcL5HdYc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzA5Lzg0LzAxLzky/LzM2MF9GXzk4NDAx/OTI1MF8wMThFNExl/bGpySmNvbWNHSjhj/TWhER1NIZTBRV0V5/Ri5qcGc" alt="Logo">
+                            <h3>Para verificar tu cuenta, haz clic en el siguiente enlace:</h3>
+                            <a href="${process.env.LOCAL}/verificar?token=${token}" 
+                                style="text-decoration: none; color: white; background: #0ea5e9; padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; display: inline-block;">
+                                Verificar cuenta
+                            </a>
+                            <h4>Este enlace expirará en 24 horas.</h4>
+                            </td>
+                        </tr>
+                        </table>
+                    </td>
+                    </tr>
+                </table>
+`
         })
 
         return true
@@ -52,12 +65,25 @@ export const sendForgotPasswordMail = async(usuario, gmailUsuario) => {
             to: `${gmailUsuario}`,
             subject: 'Cambiar contraseña',
             html:`
-            <div style="text-align: center; color: black; background: #f1f1f1; padding: 40px;">
-                <h2>${usuario.nombreUsuario} haz clic en el siguiente enlace para cambiar tu contraseña: </h2>
-                <a style="text-decoration: none; color: white; background: #0ea5e9;padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold" 
-                href="${process.env.LOCAL}/changePassword?token=${token}">Cambiar contraseña</a>
-                <h4>Este enlace caducara en 15 minutos</h4>
-            </div>
+                <table width="100%" cellspacing="0" cellpadding="0" style="padding: 20px;">
+                    <tr>
+                    <td align="center">
+                        <table width="600" cellspacing="0" cellpadding="0" style="background: #f1f1f1; padding: 20px; text-align: center;">
+                        <tr>
+                            <td>
+                            <h2>${usuario.nombreUsuario}, haz clic en el siguiente enlace para cambiar tu contraseña:</h2>
+                            <img src="https://imgs.search.brave.com/Nlz7L8RZaFdD-9KWUk4T4NCrt8IaZg-dS01VcL5HdYc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzA5Lzg0LzAxLzky/LzM2MF9GXzk4NDAx/OTI1MF8wMThFNExl/bGpySmNvbWNHSjhj/TWhER1NIZTBRV0V5/Ri5qcGc" alt="Logo">
+                            <a href="${process.env.LOCAL}/changePassword?token=${token}"
+                                style="text-decoration: none; margin-top: 20px; color: white; background: #0ea5e9; padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; display: inline-block;">
+                                Cambiar contraseña
+                            </a>
+                            <h4>Este enlace caducará en 15 minutos.</h4>
+                            </td>
+                        </tr>
+                        </table>
+                    </td>
+                    </tr>
+                </table>
             `
         })
 
@@ -75,11 +101,24 @@ export const sendChangedPasswordEmail = async(nombreUsuario, gmailUsuario) => {
             to: `${gmailUsuario}`,
             subject: `${nombreUsuario} se ha actualizado tu contraseña`,
             html:`
-            <div style="text-align: center; color: black; background: #f1f1f1; padding: 40px;">
-                <h2>${nombreUsuario} has actualizado tu contraseña</h2>
-                <a style="text-decoration: none; color: white; background: #0ea5e9;padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold"
-                href="${process.env.LOCAL}/login">Inicia Sesion</a>
-            </div>
+                <table width="100%" cellspacing="0" cellpadding="0" style="padding: 20px;">
+                    <tr>
+                    <td align="center">
+                        <table width="600" cellspacing="0" cellpadding="0" style="background: #f1f1f1; padding: 20px; text-align: center;">
+                        <tr>
+                            <td>
+                            <h2>${nombreUsuario}, has actualizado tu contraseña</h2>
+                            <img src="https://imgs.search.brave.com/Nlz7L8RZaFdD-9KWUk4T4NCrt8IaZg-dS01VcL5HdYc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzA5Lzg0LzAxLzky/LzM2MF9GXzk4NDAx/OTI1MF8wMThFNExl/bGpySmNvbWNHSjhj/TWhER1NIZTBRV0V5/Ri5qcGc" alt="Logo">
+                            <a href="${process.env.LOCAL}/login"
+                                style="text-decoration: none; margin-top: 20px; color: white; background: #0ea5e9; padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; display: inline-block;">
+                                Inicia Sesión
+                            </a>
+                            </td>
+                        </tr>
+                        </table>
+                    </td>
+                    </tr>
+                </table>
             `
         })
 
@@ -97,11 +136,24 @@ export const sendVerifiedAccountEmail = async(nombreUsuario, gmailUsuario) => {
             to: `${gmailUsuario}`,
             subject: `${nombreUsuario} se ha verificado tu cuenta`,
             html:`
-            <div style="text-align: center; color: black; background: #f1f1f1; padding: 40px;">
-                <h2>${nombreUsuario} has verificado tu cuenta</h2>
-                <a style="text-decoration: none; color: white; background: #0ea5e9;padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold"
-                href="${process.env.LOCAL}/login">Inicia Sesion</a>
-            </div>
+                <table width="100%" cellspacing="0" cellpadding="0" style="padding: 20px;">
+                    <tr>
+                    <td align="center">
+                        <table width="600" cellspacing="0" cellpadding="0" style="background: #f1f1f1; padding: 20px; text-align: center;">
+                        <tr>
+                            <td>
+                            <h2>${nombreUsuario}, has verificado tu cuenta</h2>
+                            <img src="https://imgs.search.brave.com/Nlz7L8RZaFdD-9KWUk4T4NCrt8IaZg-dS01VcL5HdYc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzA5Lzg0LzAxLzky/LzM2MF9GXzk4NDAx/OTI1MF8wMThFNExl/bGpySmNvbWNHSjhj/TWhER1NIZTBRV0V5/Ri5qcGc" alt="Logo">
+                            <a href="${process.env.LOCAL}/login"
+                                style="text-decoration: none; margin-top: 20px; color: white; background: #0ea5e9; padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; display: inline-block;">
+                                Inicia Sesión
+                            </a>
+                            </td>
+                        </tr>
+                        </table>
+                    </td>
+                    </tr>
+                </table>
             `
         })
 
