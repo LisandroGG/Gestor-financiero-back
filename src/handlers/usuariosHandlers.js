@@ -149,7 +149,6 @@ export const validarSesion = async (req, res) => {
             gmailUsuario: decoded.gmailUsuario,
         });
     } catch (error) {
-        console.error('Error al validar sesión:', error);
         return res.status(401).json({ message: 'Token inválido o expirado.' });
     }
 };
