@@ -31,6 +31,10 @@ app.use(cors({
 
 app.use(express.json())
 
+app.get("/", (req, res) => {
+    res.send("Servidor funcionando 🚀");
+});
+
 app.use("/", mainRouter)
 
 
