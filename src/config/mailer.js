@@ -179,7 +179,3 @@ export const sendVerifiedAccountEmail = async(nombreUsuario, gmailUsuario) => {
         return false
     }
 }
-
-transporter.verify().then(() => {
-    console.log('Ready for send gmail')
-})
