@@ -4,20 +4,34 @@ import pg from 'pg'
 
 dotenv.config()
 
-const { DB_NAME, DB_HOST, DB_PASSWORD, DB_USER } = process.env;
+const { DB_NAME, DB_HOST, DB_PASSWORD, DB_USER, DB_URL } = process.env;
 
-export const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
-    host: DB_HOST,
+export const  sequelize = new Sequelize(DB_URL, {
     dialect: 'postgres',
-    protocol: 'postgres',
+    protocol: 'postgres', 
     dialectModule: pg,
-    dialectOptions: process.env.NODE_ENV === 'production' ? {
+    dialectOptions: {
         ssl: {
             require: true,
             rejectUnauthorized: false,
-        },
-    } : {},
-});
+        }
+    }
+})
+
+//PARA EJECUTAR EN LOCAL
+
+// export const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
+//     host: DB_HOST,
+//     dialect: 'postgres',
+//     protocol: 'postgres',
+//     dialectModule: pg,
+//     dialectOptions: process.env.NODE_ENV === 'production' ? {
+//         ssl: {
+//             require: true,
+//             rejectUnauthorized: false,
+//         },
+//     } : {},
+// });
 
 
 
