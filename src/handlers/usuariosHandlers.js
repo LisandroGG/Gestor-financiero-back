@@ -104,6 +104,7 @@ export const loginUsuario = async (req, res) => {
             secure: process.env.NODE_ENV === 'production' ? true : false,
             sameSite: 'none',
             maxAge: 1000 * 60 * 60 * 24, // 24 horas
+            domain: '.vercel.app',
         })
         .status(200).json({
             message: 'Sesion iniciada exitosamente',
@@ -125,7 +126,8 @@ export const logoutUsuario = async (req, res) => {
         res.clearCookie('access_token', {
             httpOnly: true,
             sameSite: 'none',
-            secure: true,
+            secure: process.env.NODE_ENV === 'production' ? true : false,
+            domain: '.vercel.app',
         });
         res.status(200).json({ message: 'Sesion cerrada exitosamente' });
     } catch (error) {
