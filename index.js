@@ -13,12 +13,12 @@ dotenv.config();
 const app = express()
 const port = process.env.PORT;
 const localhost = process.env.LOCAL
-console.log(localhost)
+const deploy = process.env.DEPLOY
 
 app.use(cookieParser())
 
 app.use(cors({
-    origin: localhost,
+    origin: deploy,
     credentials: true 
 }));
 
