@@ -102,7 +102,7 @@ export const loginUsuario = async (req, res) => {
         return res.cookie('access_token', token, {
             httpOnly: true,
             sameSite: 'strict',
-            secure: false,
+            secure: true,
             maxAge: 1000 * 60 * 60 * 24, // 24 horas
         })
         .status(200).json({
@@ -125,7 +125,7 @@ export const logoutUsuario = async (req, res) => {
         res.clearCookie('access_token', {
             httpOnly: true,
             sameSite: 'strict',
-            secure: false,
+            secure: true,
         });
         res.status(200).json({ message: 'Sesion cerrada exitosamente' });
     } catch (error) {
