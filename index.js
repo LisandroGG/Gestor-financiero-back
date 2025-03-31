@@ -40,7 +40,7 @@ app.use("/", mainRouter)
 
 async function main() {
     try {
-        await sequelize.sync({ force: false });
+        await sequelize.sync({ force: true });
 
         app.listen(port, () => {
             console.log(`Server is listening on port ${port}`);

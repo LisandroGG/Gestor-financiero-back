@@ -39,7 +39,7 @@ export const sendVerifyMail = async( nombreUsuario, gmailUsuario ) => {
                             </div>
                             <h3>Para verificar tu cuenta, haz clic en el siguiente enlace:</h3>
                             <div style="display: block; width: 100%; text-align: center;">
-                                <a href="${process.env.LOCAL}/verificar?token=${token}" 
+                                <a href="${process.env.DEPLOY}/verificar?token=${token}" 
                                 style="text-decoration: none; color: white; background: #0ea5e9; padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; display: inline-block;">
                                 Verificar cuenta
                                 </a>
@@ -80,7 +80,7 @@ export const sendForgotPasswordMail = async(usuario, gmailUsuario) => {
                                             <img src="https://i.postimg.cc/yYQbXyyn/logo-1.png" alt="Logo" width="250" style="margin-bottom: 20px;">
                                         </div>
                                         <div style="display: block; width: 100%; text-align: center;">
-                                            <a href="${process.env.LOCAL}/changePassword?token=${token}"
+                                            <a href="${process.env.DEPLOY}/changePassword?token=${token}"
                                                 style="text-decoration: none; color: white; background: #0ea5e9; padding: 12px 20px; border-radius: 5px; font-size: 1rem; font-weight: bold; display: inline-block;">
                                                 Cambiar contraseña
                                             </a>
@@ -121,7 +121,7 @@ export const sendChangedPasswordEmail = async(nombreUsuario, gmailUsuario) => {
                                 <img src="https://i.postimg.cc/yYQbXyyn/logo-1.png" alt="Logo" width="250" style="margin-bottom: 20px;">
                             </div>
                             <div style="display: block; width: 100%; text-align: center;">
-                                <a href="${process.env.LOCAL}/login"
+                                <a href="${process.env.DEPLOY}/login"
                                 style="text-decoration: none; margin-top: 20px; color: white; background: #0ea5e9; padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; display: inline-block;">
                                 Inicia Sesión
                                 </a>
@@ -160,7 +160,7 @@ export const sendVerifiedAccountEmail = async(nombreUsuario, gmailUsuario) => {
                                 <img src="https://i.postimg.cc/yYQbXyyn/logo-1.png" alt="Logo" width="250">
                             </div>
                             <div style="display: block; width: 100%; text-align: center;">
-                                <a href="${process.env.LOCAL}/login"
+                                <a href="${process.env.DEPLOY}/login"
                                 style="text-decoration: none; margin-top: 20px; color: white; background: #0ea5e9; padding: 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; display: inline-block;">
                                 Inicia Sesión
                                 </a>
