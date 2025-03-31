@@ -97,13 +97,13 @@ export const loginUsuario = async (req, res) => {
             gmailUsuario: usuario.gmailUsuario,
         };
 
-        const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: '24h' }); // El token expira en 1 horas
+        const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: '1m' }); // El token expira en 1 horas
 
         return res.cookie('access_token', token, {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            maxAge: 1000 * 60 * 60 * 24, // 24 horas
+            maxAge: 1000 * 60, // 24 horas
         })
         .status(200).json({
             message: 'Sesion iniciada exitosamente',
