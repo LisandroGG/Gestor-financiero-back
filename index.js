@@ -13,14 +13,21 @@ dotenv.config();
 const app = express()
 const port = process.env.PORT;
 const localhost = process.env.LOCAL
-const deploy = process.env.DEPLOY
 
 app.use(cookieParser())
 
 app.use(cors({
-    origin: deploy,
-    credentials: true 
+    origin: "https://gastocero.vercel.app",
+    credentials: true,
+    methods: "GET, POST, PUT, DELETE, OPTIONS",
+    allowedHeaders: ["Content-Type", "Authorization"]
 }));
+
+//PARA DESARROLLO
+// app.use(cors({
+//     origin: localhost,
+//     credentials: true 
+// }));
 
 app.use(express.json())
 
