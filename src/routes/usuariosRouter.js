@@ -9,7 +9,5 @@ usuarioRouter.post('/login', loginUsuario);
 usuarioRouter.post('/logout', logoutUsuario);
 usuarioRouter.post('/forgotPassword', enviarCorreoRecuperacion);
 usuarioRouter.put('/changePassword', cambiarContraseña);
-usuarioRouter.get('/validarSesion', (req, res) => {
-    res.json({ message: "Sesión válida" }); // Solo para probar si responde
-});
+usuarioRouter.get('/verificar', verificarCuenta)
 usuarioRouter.post('/reverificar', reenviarRecuperacion)
